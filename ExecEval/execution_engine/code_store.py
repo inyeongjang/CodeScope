@@ -17,7 +17,7 @@ class CodeStore:
     def create(self):
         os.makedirs(self._source_dir, exist_ok=True)
         os.chown(self._source_dir, self.uid, self.gid)
-        os.chmod(self._source_dir, 0o775)
+        os.chmod(self._source_dir, 0o755)  # Changed from 0o775 to 0o755
 
     def destroy(self) -> None:
         shutil.rmtree(self._source_dir, ignore_errors=True)
@@ -31,7 +31,7 @@ class CodeStore:
         filepath = filepath.resolve()
 
         os.chown(filepath, self.uid, self.gid)
-        os.chmod(filepath, 0o775)
+        os.chmod(filepath, 0o644)  # Changed from 0o775 to 0o644
         return filepath
 
     def read_source_code(self, filepath: Path) -> str:

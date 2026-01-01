@@ -39,7 +39,7 @@ def exe_testcase(source_code, answer, input, lang, postfix, output_dict, collaps
     outlog, outerr, errtype = None, None, None
 
     if lang == "d":
-        p = Popen(f'cd "{args.d_path}"', shell=True)
+        p = Popen(f'cd "{args.d_path}"', shell=True)  # @BUG_HERE_START
         try:
             cmmond_line = f'"{args.cmd_path}" /c rdmd.exe "{args.project_path}\\temp.d"'
 
@@ -94,7 +94,7 @@ def exe_testcase(source_code, answer, input, lang, postfix, output_dict, collaps
 
         try:
             cmmond_line = f'{args.cmd_path} /c "{tmps_path}' + str(collapse_num) + '_temp.exe"'
-            p = Popen(cmmond_line, stdin=PIPE, stdout=PIPE, shell=True)
+            p = Popen(cmmond_line, stdin=PIPE, stdout=PIPE, shell=True)  # @BUG_HERE_END
             p.stdin.write(input.encode())
             p.stdin.flush()
             p.wait(1)
