@@ -23,9 +23,10 @@ def parse_arguments():
 
 def count_memory_and_time(command, input=None):
     process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                               text=True, shell=True)
-    process.stdin.write(input)
-    process.stdin.flush()
+                               text=True, shell=False)  # Changed shell=True to shell=False
+    if input:
+        process.stdin.write(input)
+        process.stdin.flush()
 
     cpu_time = 0
     peak_memory = 0
@@ -37,7 +38,7 @@ def count_memory_and_time(command, input=None):
             current_memory = p.memory_full_info().uss / 1024 # KB
             cpu_time = float(sum(p.cpu_times()[:4]))
             # print(p.pid)
-        except:# process ended
+        except: # process ended
             current_memory = 0
         if current_memory > peak_memory:
             peak_memory = current_memory
@@ -50,7 +51,6 @@ def count_memory_and_time(command, input=None):
             timeout_flag = True
             break
 
-
     return peak_memory, cpu_time, timeout_flag
 
 
@@ -58,7 +58,7 @@ def execute_command(command, input=None):
     if input is not None:
         input = input.replace('\r\n', '\n')
     try:
-        outcome = subprocess.run(command, input=input, capture_output=True, text=True, timeout=20, shell=True)
+        outcome = subprocess.run(command, input=input, capture_output=True, text=True, timeout=20, shell=False)  # Changed shell=True to shell=False
     except Exception as e:
         print('Error occurred while executing command:', e)
         outcome = subprocess.CompletedProcess(args=command, returncode=-1, stdout='', stderr=str(e))

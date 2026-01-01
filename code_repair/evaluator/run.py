@@ -39,11 +39,11 @@ def exe_testcase(source_code, answer, input, lang, postfix, output_dict, collaps
     outlog, outerr, errtype = None, None, None
 
     if lang == "d":
-        p = Popen(f'cd "{args.d_path}"', shell=True)
+        p = Popen([args.cmd_path, '/c', 'cd', args.d_path], shell=False)
         try:
-            cmmond_line = f'"{args.cmd_path}" /c rdmd.exe "{args.project_path}\\temp.d"'
+            cmmond_line = [args.cmd_path, '/c', 'rdmd.exe', f"{args.project_path}\\temp.d"]
 
-            p = Popen(cmmond_line, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
+            p = Popen(cmmond_line, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=False)
             p.stdin.write(input.encode())
             p.stdin.flush()
 
@@ -78,9 +78,9 @@ def exe_testcase(source_code, answer, input, lang, postfix, output_dict, collaps
             file.write(source_code)
 
         try:
-            p = Popen(f'cd "{args.delphi_path}"', shell=True)
-            cmmond_line = f'"{args.cmd_path}" /c DCC32.EXE "{tmps_path}{collapse_num}_temp.dpr"'
-            p = Popen(cmmond_line, stdout=PIPE, shell=True)
+            p = Popen([args.cmd_path, '/c', 'cd', args.delphi_path], shell=False)
+            cmmond_line = [args.cmd_path, '/c', 'DCC32.EXE', f"{tmps_path}{collapse_num}_temp.dpr"]
+            p = Popen(cmmond_line, stdout=PIPE, shell=False)
             p.wait(1)
             outlog = p.stdout.read()
             if outlog:
@@ -93,8 +93,8 @@ def exe_testcase(source_code, answer, input, lang, postfix, output_dict, collaps
             errtype = "COMPILATION_ERROR"
 
         try:
-            cmmond_line = f'{args.cmd_path} /c "{tmps_path}' + str(collapse_num) + '_temp.exe"'
-            p = Popen(cmmond_line, stdin=PIPE, stdout=PIPE, shell=True)
+            cmmond_line = [args.cmd_path, '/c', f"{tmps_path}{collapse_num}_temp.exe"]
+            p = Popen(cmmond_line, stdin=PIPE, stdout=PIPE, shell=False)
             p.stdin.write(input.encode())
             p.stdin.flush()
             p.wait(1)
@@ -145,7 +145,7 @@ def exe_testcase(source_code, answer, input, lang, postfix, output_dict, collaps
 
     elif lang == "perl":
         try:
-            p = Popen('perl temp.pl', stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
+            p = Popen(['perl', 'temp.pl'], stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=False)
             p.stdin.write(input.encode())
             p.stdin.flush()
 
@@ -331,4 +331,3 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     exe_main()
-
